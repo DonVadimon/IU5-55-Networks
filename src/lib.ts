@@ -6,9 +6,9 @@ export const getCountOfControlBits = (n: number) => {
     return k;
 };
 
-const div = (a: number, b: number) => (a - (a % b)) / b;
+export const div = (a: number, b: number) => (a - (a % b)) / b;
 
-const multipyRows = (firstRow: number, secondRowIndex: number) => {
+export const multipyRows = (firstRow: number, secondRowIndex: number) => {
     const step = 2 ** secondRowIndex;
     let r = false;
 
@@ -24,7 +24,7 @@ const multipyRows = (firstRow: number, secondRowIndex: number) => {
     return r;
 };
 
-const hammingCode = (message: number) => {
+export const hammingCode = (message: number) => {
     const countOfControlBits = getCountOfControlBits(Math.ceil(Math.log2(message + 1)));
     for (let i = 0; i < countOfControlBits; i++) {
         const indexOfControlBit = 2 ** (2 ** i - 1);
@@ -40,7 +40,7 @@ const hammingCode = (message: number) => {
     return message;
 };
 
-const hammingDecode = (code: number) => {
+export const hammingDecode = (code: number) => {
     const countOfControlBits = Math.ceil(Math.log2(code + 1));
     let errorIndex = -1;
     for (let indexOfControlBit = 0; indexOfControlBit < countOfControlBits; indexOfControlBit++) {
@@ -60,5 +60,5 @@ const hammingDecode = (code: number) => {
     return code;
 };
 
-const a = 52;
-console.log(hammingDecode(hammingCode(a) ^ (2 ** 2)));
+// const a = 52;
+// console.log(hammingDecode(hammingCode(a) ^ (2 ** 2)));
