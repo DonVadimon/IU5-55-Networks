@@ -1,5 +1,16 @@
 export const bitsCount = (a: number) => Math.ceil(Math.log2(a + 1));
 
+export const div = (a: number, b: number) => (a - (a % b)) / b;
+
+const bitOnesCount = (a: number) => {
+    let onesCount = 0;
+    while (a !== 0) {
+        onesCount += a % 2;
+        a = div(a, 2);
+    }
+    return onesCount;
+};
+
 export const getCountOfControlBits = (n: number) => {
     let k = bitsCount(n);
     while (k !== Math.ceil(Math.log2(n + +(n !== 2) + k))) {
@@ -11,13 +22,14 @@ export const getCountOfControlBits = (n: number) => {
 export const generateErrors = (codedWord: number) =>
     Array.from({ length: 2 ** bitsCount(codedWord) }, (_, index) => index).reduce<Record<number, number[]>>(
         (accum, num) => {
-            (accum[num.toString(2).replace(/0+/g, "").length] ??= []).push(num);
+            const arr = (accum[bitOnesCount(num)] ??= []);
+            if (arr.length < 101) {
+                arr.push(num);
+            }
             return accum;
         },
         {}
     );
-
-export const div = (a: number, b: number) => (a - (a % b)) / b;
 
 export const multipyRows = (firstRow: number, secondRowIndex: number) => {
     const step = 2 ** secondRowIndex;
@@ -52,7 +64,7 @@ export const hammingCode = (message: number) => {
 };
 
 export const hammingDecode = (code: number) => {
-    const countOfControlBits = bitsCount(code);
+    const countOfControlBits = getCountOfControlBits(bitsCount(code));
     let errorIndex = -1;
     for (let indexOfControlBit = 0; indexOfControlBit < countOfControlBits; indexOfControlBit++) {
         if (multipyRows(code, indexOfControlBit)) {
@@ -68,6 +80,7 @@ export const hammingDecode = (code: number) => {
         const ki = 2 ** (2 ** i - 1);
         code = div(code, ki * 2) * ki + (code % ki);
     }
+
     return code;
 };
 

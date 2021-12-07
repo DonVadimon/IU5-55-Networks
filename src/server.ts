@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import path from "path";
 import morgan from "morgan";
+import bp from "body-parser";
 
 import { hammingCode, hammingDecode, generateErrors, formatCode } from "./lib";
 
@@ -23,12 +24,13 @@ type HammingRes = {
 };
 
 const app = express();
+app.use(bp.json());
 app.use(express.static(path.join(__dirname, "static")));
 app.use(morgan("dev"));
 
 app.get("/", (_, res) => res.sendFile(path.join(__dirname, "static", "index.html")));
 
-app.get("/hamming", (req: Request<{}, {}, HammingReq>, res: Response<HammingRes>) => {
+app.post("/hamming", (req: Request<{}, {}, HammingReq>, res: Response<HammingRes>) => {
     const word = req.body?.word ?? 5;
 
     const codedWord = hammingCode(word);

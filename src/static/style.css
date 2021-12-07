@@ -1,9 +1,116 @@
+:root {
+    --border-color: black;
+    --th-background: rgb(168, 167, 167);
+    --tr-background: rgb(168, 167, 167, 0.4);
+    --th-color: #000000;
+}
+
 body {
-    padding: 0;
+    padding: 24px;
     margin: 0;
-    background: teal;
+    background: #dad4d4;
 }
 
 body * {
     box-sizing: border-box;
+}
+
+h3 {
+    width: 100%;
+    text-align: center;
+    font-size: 32px;
+    margin: 12px;
+}
+
+table {
+    width: 100%;
+    border: 1px solid var(--border-color);
+    border-collapse: collapse;
+}
+
+table td,
+table th {
+    text-align: right;
+    border: 1px solid var(--border-color);
+}
+
+table th {
+    background: var(--th-background);
+    color: var(--th-color);
+    font-size: 2em;
+    width: calc(100% / 3);
+}
+
+table td {
+    font-size: 1.8em;
+}
+
+tr:nth-child(odd) {
+    background-color: var(--tr-background);
+}
+
+table tr:hover {
+    background-color: var(--th-background);
+}
+
+table td pre {
+    margin: 0;
+}
+
+table.info {
+    font-size: 1.2em;
+}
+
+table.info td,
+table.info th {
+    text-align: center;
+}
+
+.form {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 0 24px 0;
+}
+
+.form * {
+    font-size: 2em;
+}
+
+.form input {
+    width: 100%;
+    padding: 12px;
+    outline: none;
+}
+
+.form button {
+    padding: 12px;
+}
+
+@keyframes spin {
+    from {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+.loader {
+    width: 400px;
+    height: 400px;
+    animation: spin 3s infinite linear;
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+}
+
+.loader img {
+    width: inherit;
+    height: inherit;
+}
+
+.loader.visible {
+    display: block;
 }
