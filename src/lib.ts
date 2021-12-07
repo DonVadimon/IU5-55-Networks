@@ -23,9 +23,7 @@ export const generateErrors = (codedWord: number) =>
     Array.from({ length: 2 ** bitsCount(codedWord) }, (_, index) => index).reduce<Record<number, number[]>>(
         (accum, num) => {
             const arr = (accum[bitOnesCount(num)] ??= []);
-            if (arr.length < 101) {
-                arr.push(num);
-            }
+            arr.push(num);
             return accum;
         },
         {}
@@ -63,7 +61,7 @@ export const hammingCode = (message: number) => {
     return message;
 };
 
-export const hammingDecode = (code: number) => {
+export const hammingDecode = (code: number): [decoded: number, error: boolean] => {
     const countOfControlBits = getCountOfControlBits(bitsCount(code));
     let errorIndex = -1;
     for (let indexOfControlBit = 0; indexOfControlBit < countOfControlBits; indexOfControlBit++) {
@@ -81,7 +79,7 @@ export const hammingDecode = (code: number) => {
         code = div(code, ki * 2) * ki + (code % ki);
     }
 
-    return code;
+    return [code, errorIndex !== -1];
 };
 
 export const formatCode = (num: number, baseNum: number) => num.toString(2).padStart(bitsCount(baseNum), "0");

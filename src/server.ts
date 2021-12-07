@@ -17,10 +17,17 @@ type HammingError = {
     decodedWord: string;
 };
 
+type ErrorMultiplicity = {
+    multiplicity: string;
+    errors: HammingError[];
+    detectedCount: number;
+    fixedCount: number;
+};
+
 type HammingRes = {
     word: string;
     codedWord: string;
-    errors: HammingError[][];
+    errors: ErrorMultiplicity[];
 };
 
 const app = express();
@@ -31,17 +38,31 @@ app.use(morgan("dev"));
 app.get("/", (_, res) => res.sendFile(path.join(__dirname, "static", "index.html")));
 
 app.post("/hamming", (req: Request<{}, {}, HammingReq>, res: Response<HammingRes>) => {
-    const word = req.body?.word ?? 5;
+    const word = req.body?.word ?? 687;
 
     const codedWord = hammingCode(word);
 
-    const errors = Object.entries(generateErrors(codedWord)).reduce<HammingError[][]>(
+    const errors = Object.entries(generateErrors(codedWord)).reduce<ErrorMultiplicity[]>(
         (accum, [multiplicity, errors]) => {
-            accum[+multiplicity] = errors.map<HammingError>((error) => ({
-                error: formatCode(error, codedWord),
-                errorWord: formatCode(codedWord ^ error, codedWord),
-                decodedWord: formatCode(hammingDecode(codedWord ^ error), word),
-            }));
+            let detectedCount = 0;
+            let fixedCount = 0;
+            const multiplicityErrors = errors.map<HammingError>((error) => {
+                const codedWithError = codedWord ^ error;
+                const [decoded, detected] = hammingDecode(codedWithError);
+                detectedCount += +detected;
+                fixedCount += +(decoded === word);
+                return {
+                    error: formatCode(error, codedWord),
+                    errorWord: formatCode(codedWithError, codedWord),
+                    decodedWord: formatCode(decoded, word),
+                };
+            });
+            accum[+multiplicity] = {
+                multiplicity,
+                errors: multiplicityErrors,
+                detectedCount,
+                fixedCount,
+            };
             return accum;
         },
         []

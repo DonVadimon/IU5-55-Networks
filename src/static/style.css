@@ -114,3 +114,18 @@ table.info th {
 .loader.visible {
     display: block;
 }
+
+.columns {
+    display: table;
+    margin-bottom: 24px;
+}
+
+.columns tr {
+    display: table-cell;
+}
+
+.columns tr td {
+    display: block;
+    white-space: nowrap;
+    font-size: 1.6em;
+}

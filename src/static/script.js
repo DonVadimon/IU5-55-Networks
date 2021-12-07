@@ -8,7 +8,7 @@ const createTableRow = (...array) => `<tr><td><pre>${array.join("</pre></td><td>
 /**
  *
  * @param {{ error: string, errorWord: string, decodedWord: string}[]} errors
- * @param {number} multiplicity
+ * @param {string} multiplicity
  * @returns
  */
 const createErrorTable = (errors, multiplicity) => `
@@ -20,6 +20,40 @@ const createErrorTable = (errors, multiplicity) => `
         <th>Раскодированное слово</th>
     </tr>
     ${errors.map(({ error, errorWord, decodedWord }) => createTableRow(error, errorWord, decodedWord)).join("")}
+</table>`;
+
+/**
+ *
+ * @param {{ errors: { multiplicity: string, detectedCount: number, fixedCount: number, errors: { error: string, errorWord: string, decodedWord: string}[]}[]}} result
+ * @returns
+ */
+const createAbilitiesTable = ({ errors }) =>
+    `
+<table class="columns">
+    <tr>
+        <td>Кратность ошибки</td>
+        <td>Обнаруживающая способность, %</td>
+        <td>Корректирующая способность, %</td>
+        <td>Обнаруженные ошибки</td>
+        <td>Скорректированные ошибки</td>
+        <td>Скорректированные к обнаруженным</td>
+        <td>Общее число ошибок</td>
+    </tr>
+    ${errors
+        .map(
+            ({ multiplicity, detectedCount, fixedCount, errors }) => `
+    <tr>
+        <td>${multiplicity}</td>
+        <td>${((detectedCount * 100) / errors.length).toFixed(2).replace(/(\.0)?0$/, "")}%</td>
+        <td>${((fixedCount * 100) / errors.length).toFixed(2).replace(/(\.0)?0$/, "")}%</td>
+        <td>${detectedCount}</td>
+        <td>${fixedCount}</td>
+        <td>${fixedCount / detectedCount}</td>
+        <td>${errors.length}</td>
+    </tr>
+`
+        )
+        .join("")}
 </table>`;
 
 /**
@@ -43,7 +77,7 @@ const createHammingInfo = (word, codedWord) => `
 /**
  *
  * @param {number} word
- * @returns {Promise<{ word: string, codedWord: string, errors: { error: string, errorWord: string, decodedWord: string}[][]}>}
+ * @returns {Promise<{ word: string, codedWord: string, errors: { multiplicity: string, detectedCount: number, fixedCount: number, errors: { error: string, errorWord: string, decodedWord: string}[]}[]}>}
  */
 const sendReq = async (word) =>
     await (
@@ -58,23 +92,32 @@ const sendReq = async (word) =>
 
 /**
  *
- * @param {{ word: string, codedWord: string, errors: { error: string, errorWord: string, decodedWord: string}[][]}} result
+ * @param {{ word: string, codedWord: string, errors: { multiplicity: string, detectedCount: number, fixedCount: number, errors: { error: string, errorWord: string, decodedWord: string}[]}[]}} result
  * @returns
  */
 const renderResult = ({ codedWord, word, errors }) => {
     document.getElementById("loader").classList.remove("visible");
     document.getElementById("result").innerHTML =
-        createHammingInfo(word, codedWord) + errors.map(createErrorTable).join("");
+        createHammingInfo(word, codedWord) +
+        errors.map(({ errors, multiplicity }) => createErrorTable(errors, multiplicity)).join("");
+    document.getElementById("abilities").innerHTML = createAbilitiesTable({ errors });
+};
+
+/**
+ *
+ * @param {string} value
+ */
+const attachResult = (value) => {
+    document.getElementById("loader").classList.add("visible");
+    sendReq(+value).then(renderResult);
 };
 
 const main = async () => {
-    const result = await sendReq(5);
+    const result = await sendReq(687);
     renderResult(result);
     const input = document.getElementById("word");
-    document.getElementById("send").addEventListener("click", () => {
-        document.getElementById("loader").classList.add("visible");
-        sendReq(+input.value).then(renderResult);
-    });
+    document.getElementById("send").addEventListener("click", () => attachResult(input.value));
+    input.addEventListener("keydown", (e) => (e.key.toLowerCase() === "enter" ? attachResult(input.value) : undefined));
 };
 
 window.onload = main;
