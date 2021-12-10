@@ -15,6 +15,23 @@ body * {
     box-sizing: border-box;
 }
 
+*::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+*::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+*::-webkit-scrollbar-thumb {
+    background: #dedede;
+}
+
 h3 {
     width: 100%;
     text-align: center;
@@ -115,9 +132,13 @@ table.info th {
     display: block;
 }
 
+#abilities {
+    overflow-x: auto;
+    margin-bottom: 24px;
+}
+
 .columns {
     display: table;
-    margin-bottom: 24px;
 }
 
 .columns tr {

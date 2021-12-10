@@ -19,7 +19,10 @@ const createErrorTable = (errors, multiplicity) => `
         <th>Закодированное слово</th>
         <th>Раскодированное слово</th>
     </tr>
-    ${errors.map(({ error, errorWord, decodedWord }) => createTableRow(error, errorWord, decodedWord)).join("")}
+    ${errors
+        .slice(0, 100)
+        .map(({ error, errorWord, decodedWord }) => createTableRow(error, errorWord, decodedWord))
+        .join("")}
 </table>`;
 
 /**
@@ -76,7 +79,7 @@ const createHammingInfo = (word, codedWord) => `
 
 /**
  *
- * @param {number} word
+ * @param {string} word
  * @returns {Promise<{ word: string, codedWord: string, errors: { multiplicity: string, detectedCount: number, fixedCount: number, errors: { error: string, errorWord: string, decodedWord: string}[]}[]}>}
  */
 const sendReq = async (word) =>
@@ -109,15 +112,16 @@ const renderResult = ({ codedWord, word, errors }) => {
  */
 const attachResult = (value) => {
     document.getElementById("loader").classList.add("visible");
-    sendReq(+value).then(renderResult);
+    sendReq(value).then(renderResult);
 };
 
 const main = async () => {
-    const result = await sendReq(687);
+    const result = await sendReq();
     renderResult(result);
     const input = document.getElementById("word");
     document.getElementById("send").addEventListener("click", () => attachResult(input.value));
-    input.addEventListener("keydown", (e) => (e.key.toLowerCase() === "enter" ? attachResult(input.value) : undefined));
+    input.addEventListener("input", (e) => (e.target.value = e.target.value.replace(/[^01]/g, "")));
+    input.addEventListener("keydown", (e) => (e.key.toLowerCase() === "enter" ? attachResult(input.value) : true));
 };
 
 window.onload = main;

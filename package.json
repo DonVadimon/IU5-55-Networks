@@ -8,7 +8,7 @@
         "start:nodemon": "ts-node ./src/server.ts",
         "build": "tsc",
         "start": "yarn build && node ./build/server.js",
-        "test": "echo \"no test\"",
+        "test": "ts-node src/lib.test.ts",
         "server": "ts-node server.ts"
     },
     "author": "",
