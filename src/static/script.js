@@ -7,7 +7,7 @@ const createTableRow = (...array) => `<tr><td><pre>${array.join("</pre></td><td>
 
 /**
  *
- * @param {{ error: string, errorWord: string, decodedWord: string}[]} errors
+ * @param {{ error: string, syndrom: string, errorWord: string, decodedWord: string}[]} errors
  * @param {string} multiplicity
  * @returns
  */
@@ -16,18 +16,19 @@ const createErrorTable = (errors, multiplicity) => `
 <table>
     <tr>
         <th>Ошибка</th>
+        <th>Синдром</th>
         <th>Закодированное слово</th>
         <th>Раскодированное слово</th>
     </tr>
     ${errors
         .slice(0, 100)
-        .map(({ error, errorWord, decodedWord }) => createTableRow(error, errorWord, decodedWord))
+        .map(({ error, errorWord, decodedWord, syndrom }) => createTableRow(error, syndrom, errorWord, decodedWord))
         .join("")}
 </table>`;
 
 /**
  *
- * @param {{ errors: { multiplicity: string, detectedCount: number, fixedCount: number, errors: { error: string, errorWord: string, decodedWord: string}[]}[]}} result
+ * @param {{ errors: { multiplicity: string, detectedCount: number, fixedCount: number, errors: { error: string, syndrom: string, errorWord: string, decodedWord: string}[]}[]}} result
  * @returns
  */
 const createAbilitiesTable = ({ errors }) =>
@@ -80,7 +81,7 @@ const createHammingInfo = (word, codedWord) => `
 /**
  *
  * @param {string} word
- * @returns {Promise<{ word: string, codedWord: string, errors: { multiplicity: string, detectedCount: number, fixedCount: number, errors: { error: string, errorWord: string, decodedWord: string}[]}[]}>}
+ * @returns {Promise<{ word: string, codedWord: string, errors: { multiplicity: string, detectedCount: number, fixedCount: number, errors: { error: string, syndrom: string, errorWord: string, decodedWord: string}[]}[]}>}
  */
 const sendReq = async (word) =>
     await (
@@ -95,7 +96,7 @@ const sendReq = async (word) =>
 
 /**
  *
- * @param {{ word: string, codedWord: string, errors: { multiplicity: string, detectedCount: number, fixedCount: number, errors: { error: string, errorWord: string, decodedWord: string}[]}[]}} result
+ * @param {{ word: string, codedWord: string, errors: { multiplicity: string, detectedCount: number, fixedCount: number, errors: { error: string, syndrom: string, errorWord: string, decodedWord: string}[]}[]}} result
  * @returns
  */
 const renderResult = ({ codedWord, word, errors }) => {

@@ -72,15 +72,18 @@ export const hammingCode = (_message: boolean[]) => {
     return message;
 };
 
-export const hammingDecode = (_message: boolean[]): [decoded: boolean[], error: boolean] => {
+export const hammingDecode = (_message: boolean[]): [decoded: boolean[], error: boolean, syndrom: boolean[]] => {
     const message = [..._message];
     const countOfControlBits = Math.ceil(Math.log2(message.length));
 
+    const syndrom = [];
     let errorIndex = -1;
     for (let indexOfControlBit = 0; indexOfControlBit < countOfControlBits; indexOfControlBit++) {
-        if (multiplyRows(message, indexOfControlBit)) {
+        const isErrorBit = multiplyRows(message, indexOfControlBit);
+        if (isErrorBit) {
             errorIndex += 2 ** indexOfControlBit;
         }
+        syndrom.unshift(isErrorBit);
     }
 
     if (errorIndex !== -1) {
@@ -90,7 +93,7 @@ export const hammingDecode = (_message: boolean[]): [decoded: boolean[], error: 
     for (let i = countOfControlBits - 1; i >= 0; i--) {
         message.splice(2 ** i - 1, 1);
     }
-    return [message, errorIndex !== -1];
+    return [message, errorIndex !== -1, syndrom];
 };
 
 export const createBooleanMesssage = (msg: string) => msg.split("").map((char) => char === "1");

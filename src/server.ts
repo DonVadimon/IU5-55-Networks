@@ -22,6 +22,7 @@ type HammingReq = {
 
 type HammingError = {
     error: string;
+    syndrom: string;
     errorWord: string;
     decodedWord: string;
 };
@@ -57,13 +58,14 @@ app.post("/hamming", (req: Request<{}, {}, HammingReq>, res: Response<HammingRes
             let fixedCount = 0;
             const multiplicityErrors = errors.map<HammingError>((error) => {
                 const codedWithError = applyError(codedWord, error);
-                const [decoded, detected] = hammingDecode(codedWithError);
+                const [decoded, detected, syndrom] = hammingDecode(codedWithError);
                 detectedCount += +detected;
                 fixedCount += +isEqualArrays(decoded, word);
                 return {
                     error: formatCode(error, codedWithError.length),
                     errorWord: parseBooleanMesssage(codedWithError),
                     decodedWord: parseBooleanMesssage(decoded),
+                    syndrom: parseBooleanMesssage(syndrom),
                 };
             });
             accum[+multiplicity] = {

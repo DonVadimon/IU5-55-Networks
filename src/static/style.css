@@ -55,7 +55,7 @@ table th {
     background: var(--th-background);
     color: var(--th-color);
     font-size: 2em;
-    width: calc(100% / 3);
+    width: calc(100% / 4);
 }
 
 table td {
