@@ -3,28 +3,30 @@
     "version": "1.0.0",
     "description": "",
     "main": "index.js",
+    "engines": {
+        "node": "14.x"
+    },
     "scripts": {
         "dev": "nodemon",
         "start:nodemon": "ts-node ./src/server.ts",
         "build": "tsc",
-        "start": "yarn build && node ./build/server.js",
+        "start": "yarn build && cpy ./src/static ./build/static && node ./build/server.js",
         "test": "ts-node src/lib.test.ts",
         "server": "ts-node server.ts"
     },
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "body-parser": "^1.19.0",
-        "express": "^4.17.1",
-        "ts-node": "^10.4.0",
-        "typescript": "^4.5.2"
-    },
-    "devDependencies": {
         "@types/body-parser": "^1.19.2",
         "@types/express": "^4.17.13",
         "@types/morgan": "^1.9.3",
         "@types/node": "^16.11.10",
+        "body-parser": "^1.19.0",
+        "cpy-cli": "^3.1.1",
+        "express": "^4.17.1",
         "morgan": "^1.10.0",
-        "nodemon": "^2.0.15"
+        "nodemon": "^2.0.15",
+        "ts-node": "^10.4.0",
+        "typescript": "^4.5.2"
     }
 }
